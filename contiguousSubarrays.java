@@ -4,6 +4,56 @@ import java.util.*;
 
 class Main {
 
+    class SubarrayCounter {
+        int[] array;
+        int[] subArrayCount;
+        public SubarrayCounter(int[] array) {
+            this.array = array;
+            this.subArrayCount = new int[array.length];
+        }
+
+        int[] countSubarrays() {
+            int i;
+            for (i = 0; i < this.array.length; i++) {
+                this.subArrayCount[i] = countSubarraysAtIndex(i);
+            }
+            return this.subArrayCount;
+        }
+
+        int countSubarraysAtIndex(int index) {
+            return countLeftSubarrays(index) + countRightSubarrays(index) + 1;
+        }
+
+        int countLeftSubarrays(int index) {
+            int count = 0;
+            int value = this.array[index];
+            index--;
+            while (index >= 0) {
+                if (value >= this.array[index]) {
+                    count++;
+                } else {
+                    return count;
+                }
+                index--;
+            }
+            return count;
+        }
+
+        int countRightSubarrays(int index) {
+            int count = 0;
+            int value = this.array[index];
+            index++;
+            while (index < this.array.length) {
+                if (value >= this.array[index]) {
+                    count++;
+                } else {
+                    return count;
+                }
+                index++;
+            }
+            return count;
+        }
+    }
     // Add any helper functions you may need here
 
     int[] countSubarrays(int[] arr) {
@@ -68,56 +118,5 @@ class Main {
 
     public static void main(String[] args) {
         new Main().run();
-    }
-}
-
-class SubarrayCounter {
-    int[] array;
-    int[] subArrayCount;
-    public SubarrayCounter(int[] array) {
-        this.array = array;
-        this.subArrayCount = new int[array.length];
-    }
-
-    int[] countSubarrays() {
-        int i;
-        for (i = 0; i < this.array.length; i++) {
-            this.subArrayCount[i] = countSubarraysAtIndex(i);
-        }
-        return this.subArrayCount;
-    }
-
-    int countSubarraysAtIndex(int index) {
-        return countLeftSubarrays(index) + countRightSubarrays(index) + 1;
-    }
-
-    int countLeftSubarrays(int index) {
-        int count = 0;
-        int value = this.array[index];
-        index--;
-        while (index >= 0) {
-            if (value >= this.array[index]) {
-                count++;
-            } else {
-                return count;
-            }
-            index--;
-        }
-        return count;
-    }
-
-    int countRightSubarrays(int index) {
-        int count = 0;
-        int value = this.array[index];
-        index++;
-        while (index < this.array.length) {
-            if (value >= this.array[index]) {
-                count++;
-            } else {
-                return count;
-            }
-            index++;
-        }
-        return count;
     }
 }
