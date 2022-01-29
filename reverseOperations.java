@@ -31,7 +31,7 @@ class Main {
         }
 
         private Stack<Integer> getNextSubset() {
-            Stack<Integer> stack = new Stack<Integer>();
+            Stack<Integer> stack = new Stack<>();
             if (isOdd(curr)) {
                 stack.push(curr.data);
                 curr = curr.next;
