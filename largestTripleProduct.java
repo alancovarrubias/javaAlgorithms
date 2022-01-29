@@ -3,47 +3,126 @@ import java.util.*;
 // Add any extra import statements you may need here
 
 class Main {
+
     class MaxHeap {
-        private int[] heap;
-        private int maxSize;
-        private int size;
+        int maxSize;
+        int[] heap;
+        int size;
+
         public MaxHeap(int maxSize) {
-            this.heap = new int[maxSize];
             this.maxSize = maxSize;
+            this.heap = new int[maxSize];
             this.size = 0;
         }
 
-        private int parent(int pos) { return (pos - 1) / 2; }
-        private int leftChild(int pos) { return (pos * 2) + 1; }
-        private int rightChild(int pos) { return (pos * 2) + 2; }
-    }
-    class LargestTripleProduct {
-        int[] arr;
-
-        public LargestTripleProduct(int[] arr) {
-            this.arr = arr;
+        private int getLeftChildIndex(int parentIndex) {
+            return parentIndex * 2 + 1;
         }
 
-        public int[] calculate() {
-            int[] tripleProductArray = new int[this.arr.length];
-            for (int i = 0; i < this.arr.length; i++) {
-                tripleProductArray[i] = calculateIndexValue(i);
+        private int getRightChildIndex(int parentIndex) {
+            return parentIndex * 2 + 2;
+        }
+
+        private int getParentIndex(int childIndex) {
+            return (childIndex - 1) / 2;
+        }
+
+        private boolean hasLeftChild(int parentIndex) {
+            return getLeftChildIndex(parentIndex) < size;
+        }
+
+        private boolean hasRightChild(int parentIndex) {
+            return getRightChildIndex(parentIndex) < size;
+        }
+
+        private boolean hasParent(int childIndex) {
+            return getParentIndex(childIndex) >= 0;
+        }
+
+        private int rightChild(int parentIndex) {
+            return heap[getRightChildIndex(parentIndex)];
+        }
+
+        private int leftChild(int parentIndex) {
+            return heap[getLeftChildIndex(parentIndex)];
+        }
+
+        private int parent(int childIndex) {
+            return heap[getParentIndex(childIndex)];
+        }
+
+        private void swap(int index1, int index2) {
+            int temp = heap[index1];
+            heap[index1] = heap[index2];
+            heap[index2] = temp;
+        }
+
+        public int[] peekThree() {
+            if (size < 3) {
+                int[] notEnoughArray = { 1, 1, -1 };
+                return notEnoughArray;
             }
-            return tripleProductArray;
+            int[] topThree = { heap[0], heap[1], heap[2] };
+            return topThree;
         }
-        
-        public int calculateIndexValue(int index) {
-            if (index < 2)
-                return -1;
-            return index;
+
+        public void add(int element) {
+            heap[size++] = element;
+            heapifyUp();
+        }
+
+        private void heapifyUp() {
+            int index = size - 1;
+            while (hasParent(index) && parent(index) < heap[index]) {
+                swap(index, getParentIndex(index));
+                index = getParentIndex(index);
+            }
+        }
+
+        public int remove() {
+            int element = heap[0];
+            heap[0] = heap[--size];
+            heapifyDown();
+            return element;
+        }
+
+        private void heapifyDown() {
+            int index = 0;
+            while (hasLeftChild(index)) {
+                int largestChildIndex = getLeftChildIndex(index);
+                if (hasRightChild(index) && rightChild(index) > leftChild(index)) {
+                    largestChildIndex = getRightChildIndex(index);
+                }
+                if (heap[index] < heap[largestChildIndex]) {
+                    swap(index, largestChildIndex);
+                    index = largestChildIndex;
+                } else {
+                    break;
+                }
+            }
         }
     }
-
     // Add any helper functions you may need here
 
     int[] findMaxProduct(int[] arr) {
-        LargestTripleProduct calculator = new LargestTripleProduct(arr);
-        return arr;
+        // Write your code here
+        int[] maxProductArray = new int[arr.length];
+        MaxHeap maxHeap = new MaxHeap(arr.length);
+        for (int i = 0; i < arr.length; i++) {
+            maxHeap.add(arr[i]);
+            if (i < 2) {
+                maxProductArray[i] = -1;
+            } else {
+                int one = maxHeap.remove();
+                int two = maxHeap.remove();
+                int three = maxHeap.remove();
+                maxProductArray[i] = one * two * three;
+                maxHeap.add(three);
+                maxHeap.add(two);
+                maxHeap.add(one);
+            }
+        }
+        return maxProductArray;
     }
 
     // These are the tests we use to determine if the solution is correct.
@@ -98,7 +177,6 @@ class Main {
         check(expected_2, output_2);
 
         // Add your own test cases here
-        System.out.println(7 / 2);
 
     }
 
